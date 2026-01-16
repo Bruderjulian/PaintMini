@@ -1,7 +1,7 @@
 # PaintMini
 A small paint program with conversion to ASCII Art
 
-Features:
+## Features:
   - Color Selector / Picker
   - Tools: Brush
   - Brush Sizes
@@ -9,4 +9,5 @@ Features:
     - Resolution Selection
     - Multi Color
     - Multi Character
+    - Image Supported
   - Included Explanation
