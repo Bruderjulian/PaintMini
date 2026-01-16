@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paint Mini</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <h1>Paint Mini</h1>
+
+  <p>
+    This is the <u>Ascii-Mini-Paint Site</u>! You draw something and convert
+    it to Ascii Art
+  </p>
+  <p>Or just upload an Image (<b>very highly recommended!!!</b>)</p>
+  <p>
+    The Explanation what is happening, can be found
+    <a href="./explanations.html">here</a>
+  </p>
+
+  <p>
+    The Color, the Brush Size and the Tool can be set. And the Resolution of
+    Conversion can also be changed
+  </p>
+  <p>A new Version is currently in development!</p>
+  <div class="innerBody">
+    <div class="blockContainer">
+      <h3>Painter</h3>
+      <canvas id="canvas" width="500" height="500"></canvas>
+
+      <div class="flexContainer">
+        <button type="button" onclick="erase()">Clear</button>
+        <div id="sizeLabel" style="margin-left: 10px">Size (5):</div>
+        <input type="range" value="5" min="1" max="30" step="1" class="slider" id="size" />
+        <div style="margin-left: 20px">Tool:</div>
+        <select id="tool" style="margin-left: 5px">
+          <option value="brush">Brush</option>
+          <option value="Rect">Rect</option>
+          <option value="circle">Circle</option>
+          <option value="line">Line</option>
+        </select>
+      </div>
+
+      <div class="flexContainer" style="margin-top: 10px">
+        <div>Pick Color:</div>
+        <input type="color" name="color_picker" id="color_picker" oninput="selectColor(this, true)"
+          style="margin-left: 5px; margin-top: -3px" />
+
+        <div style="margin-left: 5px">Choose Color:</div>
+        <div class="flexContainer" style="
+              margin-left: 5px;
+              border: 2px solid black;
+              margin-bottom: 4px;
+            ">
+          <div class="colorSelector" style="background: green" id="green" onclick="selectColor(this)"></div>
+          <div class="colorSelector" style="background: blue" id="blue" onclick="selectColor(this)"></div>
+          <div class="colorSelector" style="background: red" id="red" onclick="selectColor(this)"></div>
+          <div class="colorSelector" style="background: yellow" id="yellow" onclick="selectColor(this)"></div>
+          <div class="colorSelector" style="background: orange" id="orange" onclick="selectColor(this)"></div>
+          <div class="colorSelector" style="background: black" id="black" onclick="selectColor(this)"></div>
+          <div class="colorSelector" style="background: white" id="white" onclick="selectColor(this)"></div>
+        </div>
+      </div>
+
+      <div class="flexContainer" style="margin-top: 5px">
+        <div>Selected Color:</div>
+        <div class="colorPreview" id="color_preview"></div>
+      </div>
+
+    </div>
+
+    <div class="blockContainer" style="position: relative; left: 55px; top: 40px">
+      <div class="borderLine"></div>
+      <button style="position: relative; top: 10px; left: -50%" type="button" onclick="convert()">
+        Convert
+      </button>
+      <div class="borderLine" style="height: 50%; position: relative; top: 20px"></div>
+    </div>
+
+    <div class="blockContainer" style="margin-left: 50px">
+      <h3>Conversion Output</h3>
+      <canvas id="canvas2" width="500" height="500"></canvas>
+
+      <div class="flexContainer">
+        <div id="resLabel" style="margin-left: 10px">Resolution (6):</div>
+        <input type="range" value="6" min="1" max="20" step="1" class="slider" id="res" />
+        <input style="margin-left: 10px" id="uploader" type="file" accept="image/*, .png, .jpg" />
+      </div>
+
+    </div>
+  </div>
+</body>
+
+<script src="converter.js"></script>
+<script src="main.js"></script>
+
+</html>
