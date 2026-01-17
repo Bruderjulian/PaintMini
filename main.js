@@ -14,15 +14,15 @@ var height = canvas.height;
 // define Charater Function and Color Function
 function charFunc(set, len, value) {
   return set[Math.ceil((len - 1) * (value / 255))];
-};
+}
 function colorFunc(r, g, b) {
   return (r + g + b) / 3;
-};
-// create a instance of the Converter and set Resolution to 4 (as default)
+}
+// create a instance of the Converter, set Resolution to 4 (as default)
+// and use the default charset, which has special selection of symbols, which all differ in "brightness" descendingly
 var converter = new Converter(ctx2, colorFunc, charFunc);
 converter.setResolution(4);
-// set Charset to special selection of symbols, which all differ in "brightness" (amount of white pixels) descendingly
-converter.setCharset("N@#W$9876543210?!abc;:+=-,._ ");
+converter.useDefaultCharset();
 
 // alter some settings
 ctx.lineCap = "round";
@@ -35,25 +35,20 @@ var previousPos;
 var currentPos;
 var isDown = false;
 var tool = "brush";
+var res = 6;
 
 // create a Event Listener for Mouse Movements
 document.addEventListener("mousemove", function (e) {
   // if the left Mouse Button is not down, skip drawing
   if (!isDown) return;
-  // store current Position, which is now out dated, as previousPosition
-  if (previousPos) previousPos = currentPos;
-  // get current Postion from Mouse
-  currentPos = getMousePos(canvas, e);
-  // if user starts or contiues drawing, store current as previous Position
-  // they both have the same values then, so only a Dot is drawn.
-  if (!previousPos) previousPos = currentPos;
-  // draw line from current to previous Position
+  updatePos(e);
   draw();
 });
-
-document.addEventListener("mousedown", function () {
+document.addEventListener("mousedown", function (e) {
   // change isDown Variable to true if left Mouse Button is presssed
   isDown = true;
+  updatePos(e);
+  draw();
 });
 
 document.addEventListener("mouseup", function () {
@@ -66,8 +61,9 @@ document.addEventListener("mouseup", function () {
 // change line width and label when size slider gets an input (changes)
 // Note: the "e" argument represent the triggered event!
 document.getElementById("size").addEventListener("input", function (e) {
-  ctx.lineWidth = parseInt(e.target.value, 10);
-  sizeLabel.innerHTML = "Size (" + parseInt(e.target.value, 10) + ")";
+  res = Math.abs(parseInt(e.target.value, 10));
+  ctx.lineWidth = res;
+  sizeLabel.innerHTML = "Size (" + res + ")";
 });
 
 // change the resolution and label when Resolution slider gets an input (changes)
@@ -119,14 +115,6 @@ function erase() {
   ctx.clearRect(0, 0, width, height);
 }
 
-function getMousePos(canvas, evt) {
-  var rect = canvas.getBoundingClientRect();
-  return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top,
-  };
-}
-
 // gets the entire current image as an Image Data Object and then converts it
 function convert() {
   converter.update(ctx.getImageData(0, 0, width, height));
@@ -134,8 +122,9 @@ function convert() {
 
 // draws with correct tool (for future updates)
 function draw() {
+  // draw from current to previous Position
   if (tool === "brush") drawBrush();
-  //else if (tool === "circle") drawCircle();
+  else if (tool === "circle") drawCircle();
 }
 
 // first start a new path (can be thought of as a Operation with multiple sub-operations), than moves to the previous Position.
@@ -150,9 +139,28 @@ function drawBrush() {
 
 // Not implemented yet
 function drawCircle() {
-  let radius = Math.abs(currentPos.x - currentPos.y);
   ctx.beginPath();
-  ctx.arc(previousPos.x, previousPos.y, radius, 0, Math.PI * 2, true);
+  ctx.fillStyle = "#000000";
+  ctx.arc(previousPos.x, previousPos.y, res, 0, Math.PI * 2);
   ctx.stroke();
+  ctx.fill();
   ctx.closePath();
+}
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top,
+  };
+}
+
+function updatePos(e) {
+  // store current Position, which is now out dated, as previousPosition
+  if (previousPos) previousPos = currentPos;
+  // get current Postion from Mouse
+  currentPos = getMousePos(canvas, e);
+  // if user starts or contiues drawing, store current as previous Position
+  // they both have the same values then, so only a Dot is drawn.
+  if (!previousPos) previousPos = currentPos;
 }

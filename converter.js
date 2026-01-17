@@ -38,7 +38,7 @@ class Converter {
         char = this.#charFunc(
           this.#charset,
           this.#charset.length,
-          this.#colorFunc(r, g, b)
+          this.#colorFunc(r, g, b),
         );
         // set the fill color to current pixel color
         this.#ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ",255)";
@@ -54,5 +54,10 @@ class Converter {
 
   setCharset(set) {
     this.#charset = set;
+  }
+
+  // set charset to special selection of symbols, which all differ in "brightness" descendingly
+  useDefaultCharset() {
+    this.setCharset("N@#W$9876543210?!abc;:+=-,._ ");
   }
 }
