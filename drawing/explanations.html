@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explanations</title>
+    <link rel="stylesheet" href="style2.css" />
+    <style></style>
+  </head>
+
+  <body>
+    <h1>Explanations</h1>
+
+    <p>
+      So, what is the <a href="./index.html">Demo</a> exactly doing on the
+      surface and under the hood?
+    </p>
+    <p>The entire program has comments in them which should also explane everthing</p>
+
+    <h2 style="margin-bottom: -8px">Contents:</h2>
+    <ul>
+      <li><a href="#converter">Converter</a></li>
+      <li><a href="#converter_math">Converter Math</a></li>
+      <li><a href="#converter_draw">Converter Drawing</a></li>
+
+      <li><a href="#painter">Painter</a></li>
+    </ul>
+    <p>
+      Let's look at the Ascii Art Converter first. If want to start with the
+      Painter, click <a href="#painter">here</a>
+    </p>
+    <br />
+
+    <div id="converter">
+      <h2><u>Converter</u></h2>
+      <p>
+        The converter is a simple Class (called "Converter"), which takes the
+        Drawing Context of the Canvas, a Color Function and a Character
+        Function.
+      </p>
+      <p>
+        To convert an Image, we first fill the entire Canvas black and than use
+        an an <b>Algorithm</b><sup>1</sup> with some simple Math to compute a
+        new Image.
+      </p>
+      <p>
+        The Algorithm loops over all pixels from the top left corner in a row
+        for each row by using a simple "for-loop", which iterates from a start
+        to end number in fixed interval!
+      </p>
+      <p>
+        First we calculate the index/position of pixel by multiplying y value
+        with row width and add the x value
+      </p>
+      <p>
+        But each pixel is represent by 4 values in the rgba format, to include
+        that the x and y coordiantes are just need to be multiplied by 4
+      </p>
+      <pre>
+  for (var y = 0; y < imageData.height; y += resolution) {
+    for (var x = 0; x < imageData.width; x += resolution) {
+      var pos = y * 4 * w + x * 4;
+    }
+  }</pre
+      >
+      <p>
+        (Note: the variable "imageData" is an object which holds the width, the
+        height and the actual data represented by a flat array)
+      </p>
+      <p>
+        Later we need the rgb values (the alpha/opacity value is unnesseary), so
+        we directly extract it with the pixel position
+      </p>
+      <pre>
+  var r = imageData.data[pos];
+  var g = imageData.data[pos + 1];
+  var b = imageData.data[pos + 2];</pre
+      >
+
+      <br />
+      <sup>1</sup> <b>Algorithm:</b> An algorithm is a set of instruction or an program
+      to be followed by the computor to perform a given task More Info here:
+      <a href="http://en.wikipedia.org/wiki/Algorithm">Wikipedia</a><br />
+      or here:
+      <a
+        href="https://www.simplilearn.com/tutorials/data-structure-tutorial/what-is-an-algorithm"
+        >Simplilearn</a
+      >
+    </div>
+
+    <br />
+    <div id="converter_math">
+      <h3>Converter Math</h3>
+      <p>
+        We now have the pixel position and rgb values,
+        <b>what do we do now with all of that?</b>
+      </p>
+      <p>
+        What we want is a Character which looks identical to the light density.
+      </p>
+      <p>
+        So we first need to calculate the light density, for that we use the
+        Color Function which computes from given rgb values of a pixel, a light
+        value.
+      </p>
+      <p>
+        Then this value is given together with the charset and the amount of
+        Chars (of the Charset), to the Character Function which computes a
+        fitting Character.
+      </p>
+      <pre>
+  var char = this.#charFunc(
+      this.#charset,
+      this.#charset.length,
+      this.#colorFunc(r, g, b)
+    );</pre
+      >
+      <p>The Math behind these functions is very simple</p>
+      <pre>
+  function colorFunc(r, g, b) {
+    return (r + g + b) / 3;
+  };
+  function charFunc(set, len, value) {
+    return set[Math.ceil((len - 1) * (value / 255))];
+  };
+      </pre>
+      <p>
+        The first calculate the average from the rgb values and the second takes
+        a light value between 0 and 255
+      </p>
+      <p>
+        to map it to character in the set by first converting it to number in
+        range between 0 and the length of the charset.
+      </p>
+      <p>
+        (Note 1: "this.#" refers to the private variables in this instance of
+        the class (Converter))
+      </p>
+      <p>(Note 2: the char Function is more complicated than it is)</p>
+
+      <br />
+      <p>
+        Even though I choose these functions there are a many alternative option
+      </p>
+      <p>Like these simple ones for example:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Formula</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Average</td>
+            <td>(r + g + b) / 3</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>GrayScale</td>
+            <td>r * 0.3 + g * 0.59 + b * 0.11;</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Max</td>
+            <td>Math.max(r, g, b);</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Min</td>
+            <td>Math.min(r, g, b);</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Desaturation</td>
+            <td>(Math.max(r, g, b) + Math.min(r, g, b)) / 2;</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <br />
+    <div id="converter_draw">
+      <h3>Converter Drawing</h3>
+      <p>
+        The calculated Character will be drawn with the Drawing Context like
+        this:
+      </p>
+      <pre>  this.#ctx.fillText(char, x, y);</pre>
+      <p>
+        If we want, we could apply a color to the character with the rgb values
+        retrieved before!
+      </p>
+      <pre>
+  this.#ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+  this.#ctx.fillText(char, x, y);</pre
+      >
+      <p>
+        (Note: "this.#ctx" refers to a private variable (the Drawing Context,
+        short "ctx") in this instance)
+      </p>
+    </div>
+
+    <br />
+    <hr />
+    <br />
+
+    <div id="painter">
+      <h2><u>Painter</u></h2>
+      <p>
+        You might think:
+        <i
+          >"how the heck does the paint program work?! It surely is super
+          complicated!"
+        </i>
+      </p>
+      <p>But is actual very simple!</p>
+      <p>So lets start with the question: "<i>When should it draw?</i>"</p>
+      <p>
+        When the left mouse button is pressed. So we add an Event Listerner to
+        the document, which checks for a mouse up and down Event
+      </p>
+      <pre>
+        document.addEventListener("mousedown", function (e) {
+          isDown = true;
+        });
+        
+        document.addEventListener("mouseup", function (e) {
+          isDown = false;
+        });
+
+        <p>As soon as the user stops pressing the mouse</p>
+        <p>a new line/dot will be drawn from the previous to the current position</p>
+      </pre>
+    </div>
+  </body>
+</html>

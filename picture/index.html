@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <canvas id="canvas" width="800" height="800"></canvas>
+      <div class="controls">
+        <label for="resolution" id="resolutionLabel">resolution: 10</label>
+        <input
+          type="range"
+          id="resolution"
+          name="resolution"
+          min="0"
+          max="24"
+          value="5"
+        />
+        <label for="charset" id="charsetLabel" style="padding-left: 30px;">Charset: 3</label>
+        <input
+          type="range"
+          id="charset"
+          name="charset"
+          min="0"
+          max="2"
+          value="1"
+        />
+      </div>
+    </div>
+  </body>
+  <script src="./index.js" type="module"></script>
+</html>
